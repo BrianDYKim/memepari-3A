@@ -20,4 +20,8 @@ export class UserDao implements UserRepository {
       (await this.userModel.findOne({ email })) !== null ? true : false;
     return result;
   }
+
+  async findOneByEmail(email: string): Promise<User | null> {
+    return await this.userModel.findOne({ email });
+  }
 }

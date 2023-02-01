@@ -5,4 +5,6 @@ export interface UserRepository {
   createUser(createRequest: CreateUserRequest): Promise<User>;
 
   existsByEmail(email: string): Promise<boolean>;
+
+  findOneByEmail(email: string): Promise<User | null>;
 }
