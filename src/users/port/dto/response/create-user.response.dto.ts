@@ -1,5 +1,4 @@
-import { PickType } from '@nestjs/mapped-types';
-import { OmitType } from '@nestjs/mapped-types';
+import { PickType, ApiProperty } from '@nestjs/swagger';
 import { User } from 'src/users/domain/user.entity';
 export class CreateUserResponse extends PickType(User, [
   'email',
@@ -7,26 +6,34 @@ export class CreateUserResponse extends PickType(User, [
   'address',
   'phoneNumber',
 ] as const) {
+
+  @ApiProperty({
+    example: '123qwe', 
+    description: 'user의 식별자입니다'
+  })
+  id: string;
+
   private constructor(
+    id: string, 
     email: string,
     name: string,
     address: string,
     phoneNumber: string,
   ) {
     super();
-
+    this.id = id;
     this.email = email;
     this.name = name;
     this.address = address;
     this.phoneNumber = phoneNumber;
   }
 
-  static of(email: string, name: string, address: string, phoneNumber: string) {
-    return new CreateUserResponse(email, name, address, phoneNumber);
+  static of(id: string, email: string, name: string, address: string, phoneNumber: string) {
+    return new CreateUserResponse(id, email, name, address, phoneNumber);
   }
 
   static entityToResponse(user: User): CreateUserResponse {
-    const {email, name, address, phoneNumber} = user;
-    return this.of(email, name, address, phoneNumber);
+    const {id, email, name, address, phoneNumber} = user;
+    return this.of(id, email, name, address, phoneNumber);
   }
 }
