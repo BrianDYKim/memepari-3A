@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
-import { UsersServiceImpl } from '../interactor/users.service';
+import { UsersServiceImpl } from '../../port/service/users.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -10,7 +10,7 @@ describe('UsersController', () => {
       controllers: [UsersController],
       providers: [
         {
-          provide: 'serviceImpl',
+          provide: 'service',
           useClass: UsersServiceImpl,
         },
       ],

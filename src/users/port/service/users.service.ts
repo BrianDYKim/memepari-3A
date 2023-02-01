@@ -1,16 +1,24 @@
+import {
+  Inject,
+  Injectable,
+  HttpException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { LoginResponse } from './../dto/response/login-token.response.dto';
+import { LoginRequest } from './../dto/request/login-user.request.dto';
 import { UserService } from './ifs/users.service.ifs';
-import { Inject, Injectable, HttpException } from '@nestjs/common';
 import { CreateUserRequest } from '../../port/dto/request/create-user.request.dto';
-import { UpdateUserDto } from '../../port/dto/request/update-user.request.dto';
 import { CreateUserResponse } from '../dto/response/create-user.response.dto';
 import { User } from 'src/users/domain/user.entity';
 import { UserRepository } from '../users.repository';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersServiceImpl implements UserService {
   constructor(
     @Inject('repository') private readonly userRepository: UserRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
   async signUp(createRequest: CreateUserRequest): Promise<CreateUserResponse> {
@@ -32,26 +40,42 @@ export class UsersServiceImpl implements UserService {
       phoneNumber,
     };
 
-    const createdUser: User = await this.userRepository.createUser(
-      hashedUser,
-    );
+    const createdUser: User = await this.userRepository.createUser(hashedUser);
 
     return CreateUserResponse.entityToResponse(createdUser);
   }
 
-  findAll(): string {
-    return `This action returns all users`;
-  }
+  async jwtLogin(loginRequest: LoginRequest): Promise<LoginResponse> {
+    const { email, password } = loginRequest;
 
-  findOne(id: number): string {
-    return `This action returns a #${id} user`;
-  }
+    const foundUser: User | null = await this.userRepository.findOneByEmail(
+      email,
+    );
 
-  update(id: number, updateUserDto: UpdateUserDto): string {
-    return `This action updates a #${id} user`;
-  }
+    if (!foundUser) {
+      throw new HttpException(
+        '이메일 또는 비밀번호를 다시 확인해주십시오.',
+        401,
+      );
+    }
 
-  remove(id: number): string {
-    return `This action removes a #${id} user`;
+    const isPasswordValidate: boolean = await bcrypt.compare(
+      password,
+      foundUser.password,
+    );
+
+    if (!isPasswordValidate) {
+      throw new HttpException(
+        '이메일 또는 비밀번호를 다시 확인해주십시오.',
+        401,
+      );
+    }
+
+    const jwtPayload = {
+      id: foundUser.id, 
+      email: foundUser.email
+    };
+
+    return LoginResponse.of(this.jwtService.sign(jwtPayload));
   }
 }
