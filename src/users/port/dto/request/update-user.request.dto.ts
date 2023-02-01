@@ -1,5 +1,5 @@
 import { User } from 'src/users/domain/user.entity';
-import { PickType } from '@nestjs/mapped-types';
+import { PickType } from '@nestjs/swagger';
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserRequest } from './create-user.request.dto';
 

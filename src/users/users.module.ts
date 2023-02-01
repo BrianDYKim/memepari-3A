@@ -12,7 +12,7 @@ import { UserDao } from './adapter/dao/users.dao';
   controllers: [UsersController],
   providers: [
     {
-      provide: 'serviceImpl',
+      provide: 'service',
       useClass: UsersServiceImpl,
     },
     {
