@@ -6,15 +6,14 @@ export class CreateUserResponse extends PickType(User, [
   'address',
   'phoneNumber',
 ] as const) {
-
   @ApiProperty({
-    example: '123qwe', 
-    description: 'user의 식별자입니다'
+    example: '123qwe',
+    description: 'user의 식별자입니다',
   })
   id: string;
 
-  private constructor(
-    id: string, 
+  constructor(
+    id: string,
     email: string,
     name: string,
     address: string,
@@ -28,12 +27,18 @@ export class CreateUserResponse extends PickType(User, [
     this.phoneNumber = phoneNumber;
   }
 
-  static of(id: string, email: string, name: string, address: string, phoneNumber: string) {
+  static of(
+    id: string,
+    email: string,
+    name: string,
+    address: string,
+    phoneNumber: string,
+  ) {
     return new CreateUserResponse(id, email, name, address, phoneNumber);
   }
 
   static entityToResponse(user: User): CreateUserResponse {
-    const {id, email, name, address, phoneNumber} = user;
+    const { id, email, name, address, phoneNumber } = user;
     return this.of(id, email, name, address, phoneNumber);
   }
 }
