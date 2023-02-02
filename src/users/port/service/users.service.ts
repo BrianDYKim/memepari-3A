@@ -1,9 +1,5 @@
-import {
-  Inject,
-  Injectable,
-  HttpException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { DeleteUserRequest } from './../dto/request/delete-user.request.dto';
+import { Inject, Injectable, HttpException } from '@nestjs/common';
 import { LoginResponse } from './../dto/response/login-token.response.dto';
 import { LoginRequest } from './../dto/request/login-user.request.dto';
 import { UserService } from './ifs/users.service.ifs';
@@ -15,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../dto/request/jwt-payload.request.dto';
 import { ReadUserResponse } from '../dto/response/read-user.response.dto';
+import { DeleteUserResponse } from '../dto/response/delete-user.response.dto';
 
 @Injectable()
 export class UsersServiceImpl implements UserService {
@@ -74,20 +71,35 @@ export class UsersServiceImpl implements UserService {
     }
 
     const jwtPayload = {
-      id: foundUser.id, 
-      email: foundUser.email
+      id: foundUser.id,
+      email: foundUser.email,
     };
 
     return LoginResponse.of(this.jwtService.sign(jwtPayload));
   }
 
   async findByJwtPayload(jwtPayload: JwtPayload): Promise<ReadUserResponse> {
-      const foundUser: User | null = await this.userRepository.findOneById(jwtPayload.id);
+    const foundUser: User | null = await this.userRepository.findOneById(
+      jwtPayload.id,
+    );
 
-      if (!foundUser) {
-        throw new HttpException('권한이 없습니다', 401);
-      }
+    if (!foundUser) {
+      throw new HttpException('권한이 없습니다', 401);
+    }
 
-      return ReadUserResponse.entityToResponse(foundUser);
+    return ReadUserResponse.entityToResponse(foundUser);
+  }
+
+  async deleteUser(
+    deleteRequest: DeleteUserRequest,
+  ): Promise<DeleteUserResponse> {
+    const { id, email } = deleteRequest;
+    const deleteResult: boolean = await this.userRepository.deleteOneById(id);
+
+    if (!deleteResult) {
+      throw new HttpException('사용자 삭제가 실패하였습니다', 500);
+    }
+
+    return DeleteUserResponse.of(id, email);
   }
 }

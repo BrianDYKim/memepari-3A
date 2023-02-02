@@ -28,4 +28,10 @@ export class UserDao implements UserRepository {
   async findOneById(id: string): Promise<User | null> {
     return await this.userModel.findById(id);
   }
+
+  async deleteOneById(id: string): Promise<boolean> {
+      const result = await this.userModel.deleteOne({id});
+
+      return result ? true : false;
+  }
 }
