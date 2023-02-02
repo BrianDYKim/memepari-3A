@@ -1,5 +1,6 @@
-import { CreateUserRequest } from './dto/request/create-user.request.dto';
-import { User } from '../domain/user.entity';
+import { UpdateUserRequest } from './../dto/request/update-user.request.dto';
+import { CreateUserRequest } from '../dto/request/create-user.request.dto';
+import { User } from '../../domain/user.entity';
 
 export interface UserRepository {
   createUser(createRequest: CreateUserRequest): Promise<User>;
@@ -11,4 +12,6 @@ export interface UserRepository {
   findOneById(id: string): Promise<User | null>;
 
   deleteOneById(id: string): Promise<boolean>;
+
+  updateUser(updateRequest: UpdateUserRequest): Promise<User>;
 }
