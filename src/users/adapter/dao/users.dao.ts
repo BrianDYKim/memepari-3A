@@ -24,4 +24,8 @@ export class UserDao implements UserRepository {
   async findOneByEmail(email: string): Promise<User | null> {
     return await this.userModel.findOne({ email });
   }
+
+  async findOneById(id: string): Promise<User | null> {
+    return await this.userModel.findById(id);
+  }
 }

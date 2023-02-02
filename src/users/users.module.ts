@@ -7,6 +7,7 @@ import { UserDao } from './adapter/dao/users.dao';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
+import { JwtStrategy } from './adapter/jwt/jwt.strategy';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ConfigModule } from '@nestjs/config';
       provide: 'repository',
       useClass: UserDao,
     },
+    JwtStrategy
   ],
 })
 export class UsersModule {}

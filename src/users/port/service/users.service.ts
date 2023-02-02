@@ -13,6 +13,8 @@ import { User } from 'src/users/domain/user.entity';
 import { UserRepository } from '../users.repository';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from '../dto/request/jwt-payload.request.dto';
+import { ReadUserResponse } from '../dto/response/read-user.response.dto';
 
 @Injectable()
 export class UsersServiceImpl implements UserService {
@@ -77,5 +79,15 @@ export class UsersServiceImpl implements UserService {
     };
 
     return LoginResponse.of(this.jwtService.sign(jwtPayload));
+  }
+
+  async findByJwtPayload(jwtPayload: JwtPayload): Promise<ReadUserResponse> {
+      const foundUser: User | null = await this.userRepository.findOneById(jwtPayload.id);
+
+      if (!foundUser) {
+        throw new HttpException('권한이 없습니다', 401);
+      }
+
+      return ReadUserResponse.entityToResponse(foundUser);
   }
 }
