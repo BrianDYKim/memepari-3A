@@ -42,6 +42,17 @@ async function bootstrap() {
     .setTitle(APPLICATION_NAME)
     .setDescription(APPLICATION_DESCRIPTION)
     .setVersion(APPLICATION_VERSION)
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT Token',
+        in: 'header',
+      },
+      'accesskey',
+    )
     .build();
 
   const document: OpenAPIObject = SwaggerModule.createDocument(
