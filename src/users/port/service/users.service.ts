@@ -6,12 +6,14 @@ import { UserService } from './ifs/users.service.ifs';
 import { CreateUserRequest } from '../../port/dto/request/create-user.request.dto';
 import { CreateUserResponse } from '../dto/response/create-user.response.dto';
 import { User } from 'src/users/domain/user.entity';
-import { UserRepository } from '../users.repository';
+import { UserRepository } from '../repository/users.repository';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../dto/request/jwt-payload.request.dto';
 import { ReadUserResponse } from '../dto/response/read-user.response.dto';
 import { DeleteUserResponse } from '../dto/response/delete-user.response.dto';
+import { UpdateUserRequest } from '../dto/request/update-user.request.dto';
+import { UpdateUserResponse } from '../dto/response/update-user.response.dto';
 
 @Injectable()
 export class UsersServiceImpl implements UserService {
@@ -101,5 +103,21 @@ export class UsersServiceImpl implements UserService {
     }
 
     return DeleteUserResponse.of(id, email);
+  }
+
+  async updateUser(
+    updateRequest: UpdateUserRequest,
+  ): Promise<UpdateUserResponse> {
+    const { id, password, address } = updateRequest;
+
+    const hashedPassword: string | null = password
+      ? await bcrypt.hash(updateRequest.password, 10)
+      : null;
+
+    const hashedUserRequest: UpdateUserRequest = UpdateUserRequest.of(id, hashedPassword, address);
+
+    const updatedUser: User = await this.userRepository.updateUser(hashedUserRequest);
+
+    return UpdateUserResponse.entityToResponse(updatedUser);
   }
 }

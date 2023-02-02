@@ -6,6 +6,8 @@ import { LoginResponse } from './../../dto/response/login-token.response.dto';
 import { LoginRequest } from './../../dto/request/login-user.request.dto';
 import { CreateUserResponse } from './../../dto/response/create-user.response.dto';
 import { CreateUserRequest } from '../../dto/request/create-user.request.dto';
+import { UpdateUserRequest } from '../../dto/request/update-user.request.dto';
+import { UpdateUserResponse } from '../../dto/response/update-user.response.dto';
 
 export interface UserService {
   signUp(createRequest: CreateUserRequest): Promise<CreateUserResponse>;
@@ -15,4 +17,6 @@ export interface UserService {
   findByJwtPayload(jwtPayload: JwtPayload): Promise<ReadUserResponse>;
 
   deleteUser(deleteRequest: DeleteUserRequest): Promise<DeleteUserResponse>;
+
+  updateUser(updateRequest: UpdateUserRequest): Promise<UpdateUserResponse>;
 }

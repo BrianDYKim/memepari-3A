@@ -1,9 +1,12 @@
+import { UpdatePropertyExclusivelyExistsPipe } from './pipes/user-update.pipe';
+import { UpdateUserResponse } from './../../port/dto/response/update-user.response.dto';
+import { UpdateUserRequest } from 'src/users/port/dto/request/update-user.request.dto';
+import { UpdateUser } from './decorators/user-update.decorator';
 import { DeleteUserResponse } from './../../port/dto/response/delete-user.response.dto';
 import { DeleteUserRequest } from './../../port/dto/request/delete-user.request.dto';
 import { ReadUserResponse } from './../../port/dto/response/read-user.response.dto';
 import { LoginResponse } from './../../port/dto/response/login-token.response.dto';
 import { LoginRequest } from './../../port/dto/request/login-user.request.dto';
-import { Result } from './../../../common/results/results';
 import { UserService } from '../../port/service/ifs/users.service.ifs';
 import {
   Controller,
@@ -17,7 +20,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiHeader,
+  ApiBody,
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
@@ -110,22 +113,22 @@ export class UsersController {
     return ResultFactory.getSuccessResult(authenticationResult);
   }
 
-  @ApiOperation({ summary: '사용자 삭제하기'})
+  @ApiOperation({ summary: '사용자 삭제하기' })
   @ApiBearerAuth('accesskey')
   @ApiResponse({
-    status: 200, 
-    description: '사용자 삭제 성공 응답입니다.', 
-    type: DeleteUserResponse
+    status: 200,
+    description: '사용자 삭제 성공 응답입니다.',
+    type: DeleteUserResponse,
   })
   @ApiResponse({
-    status: 500, 
-    description: '예기치 못한 서버 에러로 인해 사용자 삭제에 실패하는 응답입니다.'
+    status: 500,
+    description:
+      '예기치 못한 서버 에러로 인해 사용자 삭제에 실패하는 응답입니다.',
   })
   @UseGuards(JwtAuthGuard)
   @Delete()
   async deleteUser(@Req() deleteRequest: Request) {
-    const authenticationResult: ReadUserResponse =
-      deleteRequest.user as ReadUserResponse;
+    const authenticationResult = deleteRequest.user as ReadUserResponse;
     const { id, email } = authenticationResult;
 
     const deleteUserRequest: DeleteUserRequest = DeleteUserRequest.of(
@@ -137,5 +140,32 @@ export class UsersController {
       await this.userService.deleteUser(deleteUserRequest);
 
     return ResultFactory.getSuccessResult(deleteUserResponse);
+  }
+
+  @ApiOperation({ summary: '사용자 정보 수정' })
+  @ApiBearerAuth('accesskey')
+  @ApiBody({type: UpdateUserRequest})
+  @ApiResponse({
+    status: 200,
+    description: '사용자 정보 수정 성공 응답입니다.',
+    type: UpdateUserResponse,
+  })
+  @ApiResponse({
+    status: 401,
+    description:
+      '유저 권한이 존재하지 않는 경우에 발생하는 오류입니다. 토큰을 다시 확인해주세요.',
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      '잘못된 요청에 의한 오류입니다. 주로 요구사항에 맞지 않는 파라미터를 전달 시 해당 오류가 발생합니다.',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  async updateUser(@UpdateUser(UpdatePropertyExclusivelyExistsPipe) updateRequest: UpdateUserRequest) {
+    const updateUserResponse: UpdateUserResponse =
+      await this.userService.updateUser(updateRequest);
+
+    return ResultFactory.getSuccessResult(updateUserResponse);
   }
 }
