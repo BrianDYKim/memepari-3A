@@ -30,6 +30,7 @@ import { CreateUserResponse } from 'src/users/port/dto/response/create-user.resp
 import { ResultFactory } from 'src/common/results/results.factory';
 import { JwtAuthGuard } from '../jwt/jwt.guard';
 import { Request } from 'express';
+import { DeleteUser } from './decorators/user-delete.decorator';
 
 @Controller('api/v1/users')
 export class UsersController {
@@ -108,8 +109,6 @@ export class UsersController {
     const authenticationResult: ReadUserResponse =
       readRequest.user as ReadUserResponse;
 
-    // TODO 유저 권한을 role field를 이용해서 검증해야함
-
     return ResultFactory.getSuccessResult(authenticationResult);
   }
 
@@ -127,17 +126,9 @@ export class UsersController {
   })
   @UseGuards(JwtAuthGuard)
   @Delete()
-  async deleteUser(@Req() deleteRequest: Request) {
-    const authenticationResult = deleteRequest.user as ReadUserResponse;
-    const { id, email } = authenticationResult;
-
-    const deleteUserRequest: DeleteUserRequest = DeleteUserRequest.of(
-      id,
-      email,
-    );
-
+  async deleteUser(@DeleteUser() deleteRequest: DeleteUserRequest) {
     const deleteUserResponse: DeleteUserResponse =
-      await this.userService.deleteUser(deleteUserRequest);
+      await this.userService.deleteUser(deleteRequest);
 
     return ResultFactory.getSuccessResult(deleteUserResponse);
   }
