@@ -9,4 +9,6 @@ export interface UserRepository {
   findOneByEmail(email: string): Promise<User | null>;
 
   findOneById(id: string): Promise<User | null>;
+
+  deleteOneById(id: string): Promise<boolean>;
 }

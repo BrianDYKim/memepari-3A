@@ -1,3 +1,5 @@
+import { DeleteUserRequest } from './../../dto/request/delete-user.request.dto';
+import { DeleteUserResponse } from './../../dto/response/delete-user.response.dto';
 import { ReadUserResponse } from './../../dto/response/read-user.response.dto';
 import { JwtPayload } from './../../dto/request/jwt-payload.request.dto';
 import { LoginResponse } from './../../dto/response/login-token.response.dto';
@@ -11,4 +13,6 @@ export interface UserService {
   jwtLogin(loginRequest: LoginRequest): Promise<LoginResponse>;
 
   findByJwtPayload(jwtPayload: JwtPayload): Promise<ReadUserResponse>;
+
+  deleteUser(deleteRequest: DeleteUserRequest): Promise<DeleteUserResponse>;
 }
