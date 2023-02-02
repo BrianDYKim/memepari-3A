@@ -1,3 +1,5 @@
+import { DeleteUserResponse } from './../../port/dto/response/delete-user.response.dto';
+import { DeleteUserRequest } from './../../port/dto/request/delete-user.request.dto';
 import { ReadUserResponse } from './../../port/dto/response/read-user.response.dto';
 import { LoginResponse } from './../../port/dto/response/login-token.response.dto';
 import { LoginRequest } from './../../port/dto/request/login-user.request.dto';
@@ -11,8 +13,14 @@ import {
   Inject,
   UseGuards,
   Req,
+  Delete,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiHeader, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiHeader,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 
 import { CreateUserRequest } from '../../port/dto/request/create-user.request.dto';
 import { CreateUserResponse } from 'src/users/port/dto/response/create-user.response.dto';
@@ -100,5 +108,34 @@ export class UsersController {
     // TODO 유저 권한을 role field를 이용해서 검증해야함
 
     return ResultFactory.getSuccessResult(authenticationResult);
+  }
+
+  @ApiOperation({ summary: '사용자 삭제하기'})
+  @ApiBearerAuth('accesskey')
+  @ApiResponse({
+    status: 200, 
+    description: '사용자 삭제 성공 응답입니다.', 
+    type: DeleteUserResponse
+  })
+  @ApiResponse({
+    status: 500, 
+    description: '예기치 못한 서버 에러로 인해 사용자 삭제에 실패하는 응답입니다.'
+  })
+  @UseGuards(JwtAuthGuard)
+  @Delete()
+  async deleteUser(@Req() deleteRequest: Request) {
+    const authenticationResult: ReadUserResponse =
+      deleteRequest.user as ReadUserResponse;
+    const { id, email } = authenticationResult;
+
+    const deleteUserRequest: DeleteUserRequest = DeleteUserRequest.of(
+      id,
+      email,
+    );
+
+    const deleteUserResponse: DeleteUserResponse =
+      await this.userService.deleteUser(deleteUserRequest);
+
+    return ResultFactory.getSuccessResult(deleteUserResponse);
   }
 }

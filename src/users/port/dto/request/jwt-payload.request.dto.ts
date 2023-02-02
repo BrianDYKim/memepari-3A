@@ -1,4 +1,4 @@
-export interface JwtPayload {
+export class JwtPayload {
     id: string;
 
     email: string;
