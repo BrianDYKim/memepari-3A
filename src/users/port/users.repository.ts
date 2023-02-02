@@ -7,4 +7,6 @@ export interface UserRepository {
   existsByEmail(email: string): Promise<boolean>;
 
   findOneByEmail(email: string): Promise<User | null>;
+
+  findOneById(id: string): Promise<User | null>;
 }
