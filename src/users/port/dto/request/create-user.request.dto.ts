@@ -7,4 +7,5 @@ export class CreateUserRequest extends PickType(User, [
   'name',
   'address',
   'phoneNumber',
+  'roles',
 ] as const) {}

@@ -1,3 +1,4 @@
+import { Role } from './../../../domain/vo/user-role.vo';
 import { PickType, ApiProperty } from '@nestjs/swagger';
 import { User } from 'src/users/domain/user.entity';
 export class CreateUserResponse extends PickType(User, [
@@ -5,6 +6,7 @@ export class CreateUserResponse extends PickType(User, [
   'name',
   'address',
   'phoneNumber',
+  'roles',
 ] as const) {
   @ApiProperty({
     example: '123qwe',
@@ -18,6 +20,7 @@ export class CreateUserResponse extends PickType(User, [
     name: string,
     address: string,
     phoneNumber: string,
+    roles: Role[],
   ) {
     super();
     this.id = id;
@@ -25,6 +28,7 @@ export class CreateUserResponse extends PickType(User, [
     this.name = name;
     this.address = address;
     this.phoneNumber = phoneNumber;
+    this.roles = roles;
   }
 
   static of(
@@ -33,12 +37,13 @@ export class CreateUserResponse extends PickType(User, [
     name: string,
     address: string,
     phoneNumber: string,
+    roles: Role[],
   ) {
-    return new CreateUserResponse(id, email, name, address, phoneNumber);
+    return new CreateUserResponse(id, email, name, address, phoneNumber, roles);
   }
 
   static entityToResponse(user: User): CreateUserResponse {
-    const { id, email, name, address, phoneNumber } = user;
-    return this.of(id, email, name, address, phoneNumber);
+    const { id, email, name, address, phoneNumber, roles } = user;
+    return this.of(id, email, name, address, phoneNumber, roles);
   }
 }

@@ -1,3 +1,6 @@
+import { AdminRoleOnlyExistsPipe } from './pipes/role-admin.pipe';
+import { UserRoleExistsPipe } from './pipes/role-user.pipe';
+import { ReadUser } from './decorators/user-read.decorator';
 import { UpdatePropertyExclusivelyExistsPipe } from './pipes/user-update.pipe';
 import { UpdateUserResponse } from './../../port/dto/response/update-user.response.dto';
 import { UpdateUserRequest } from 'src/users/port/dto/request/update-user.request.dto';
@@ -15,7 +18,6 @@ import {
   Body,
   Inject,
   UseGuards,
-  Req,
   Delete,
 } from '@nestjs/common';
 import {
@@ -28,8 +30,7 @@ import {
 import { CreateUserRequest } from '../../port/dto/request/create-user.request.dto';
 import { CreateUserResponse } from 'src/users/port/dto/response/create-user.response.dto';
 import { ResultFactory } from 'src/common/results/results.factory';
-import { JwtAuthGuard } from '../jwt/jwt.guard';
-import { Request } from 'express';
+import { JwtAuthGuard } from './guards/jwt.guard';
 import { DeleteUser } from './decorators/user-delete.decorator';
 
 @Controller('api/v1/users')
@@ -105,10 +106,9 @@ export class UsersController {
   })
   @UseGuards(JwtAuthGuard)
   @Get('/user/profile')
-  async readUserProfile(@Req() readRequest: Request) {
-    const authenticationResult: ReadUserResponse =
-      readRequest.user as ReadUserResponse;
-
+  async readUserProfile(
+    @ReadUser(UserRoleExistsPipe) authenticationResult: ReadUserResponse,
+  ) {
     return ResultFactory.getSuccessResult(authenticationResult);
   }
 
@@ -126,7 +126,9 @@ export class UsersController {
   })
   @UseGuards(JwtAuthGuard)
   @Delete()
-  async deleteUser(@DeleteUser() deleteRequest: DeleteUserRequest) {
+  async deleteUser(
+    @DeleteUser(UserRoleExistsPipe) deleteRequest: DeleteUserRequest,
+  ) {
     const deleteUserResponse: DeleteUserResponse =
       await this.userService.deleteUser(deleteRequest);
 
@@ -135,7 +137,7 @@ export class UsersController {
 
   @ApiOperation({ summary: '사용자 정보 수정' })
   @ApiBearerAuth('accesskey')
-  @ApiBody({type: UpdateUserRequest})
+  @ApiBody({ type: UpdateUserRequest })
   @ApiResponse({
     status: 200,
     description: '사용자 정보 수정 성공 응답입니다.',
@@ -153,7 +155,10 @@ export class UsersController {
   })
   @UseGuards(JwtAuthGuard)
   @Post()
-  async updateUser(@UpdateUser(UpdatePropertyExclusivelyExistsPipe) updateRequest: UpdateUserRequest) {
+  async updateUser(
+    @UpdateUser(UserRoleExistsPipe, UpdatePropertyExclusivelyExistsPipe)
+    updateRequest: UpdateUserRequest,
+  ) {
     const updateUserResponse: UpdateUserResponse =
       await this.userService.updateUser(updateRequest);
 

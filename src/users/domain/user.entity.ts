@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { Document } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
+import { Role } from './vo/user-role.vo';
 
 const options: SchemaOptions = {
   timestamps: true,
@@ -26,18 +27,18 @@ export class User extends Document {
   email: string;
 
   @ApiProperty({
-    example: 'qwesfdfkjhqwe123!', 
-    description: '비밀번호', 
-    required: true
+    example: 'qwesfdfkjhqwe123!',
+    description: '비밀번호',
+    required: true,
   })
   @Prop({ required: true })
   @IsNotEmpty()
   password: string;
 
   @ApiProperty({
-    example: '김도엽', 
-    description: '이름 (중복 허용 x, 최소 길이 2, 최대 길이 20)', 
-    required: true
+    example: '김도엽',
+    description: '이름 (중복 허용 x, 최소 길이 2, 최대 길이 20)',
+    required: true,
   })
   @Prop({ required: true, unique: true })
   @IsNotEmpty()
@@ -46,23 +47,32 @@ export class User extends Document {
   name: string;
 
   @ApiProperty({
-    example: '경상북도 포항시 북구', 
-    description: '주소', 
-    required: true
+    example: '경상북도 포항시 북구',
+    description: '주소',
+    required: true,
   })
   @Prop({ required: true })
   @IsNotEmpty()
   address: string;
 
   @ApiProperty({
-    example: '010-1111-2222', 
-    description: '휴대폰 번호 (중복 허용 x, 한국 기준 휴대폰 번호만 허용)', 
-    required: true
+    example: '010-1111-2222',
+    description: '휴대폰 번호 (중복 허용 x, 한국 기준 휴대폰 번호만 허용)',
+    required: true,
   })
   @Prop({ required: true, unique: true })
   @IsPhoneNumber('KR')
   @IsNotEmpty()
   phoneNumber: string;
+
+  @ApiProperty({
+    example: ['User'],
+    description: '사용자의 권한',
+    required: true,
+  })
+  @Prop({ required: true })
+  @IsNotEmpty()
+  roles: Role[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

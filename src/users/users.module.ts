@@ -8,6 +8,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './adapter/jwt/jwt.strategy';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { JwtStrategy } from './adapter/jwt/jwt.strategy';
     {
       provide: 'repository',
       useClass: UserDao,
-    },
+    }, 
     JwtStrategy
   ],
 })
