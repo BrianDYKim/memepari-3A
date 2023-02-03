@@ -19,6 +19,7 @@ import {
   Inject,
   UseGuards,
   Delete,
+  Put,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -33,7 +34,7 @@ import { ResultFactory } from 'src/common/results/results.factory';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { DeleteUser } from './decorators/user-delete.decorator';
 
-@Controller('api/v1/users')
+@Controller('users')
 export class UsersController {
   constructor(@Inject('service') private readonly userService: UserService) {}
 
@@ -53,7 +54,7 @@ export class UsersController {
     description:
       '잘못된 요청에 의한 오류입니다. 주로 요구사항에 맞지 않는 파라미터를 전달 시 해당 오류가 발생합니다.',
   })
-  @Post('/user/register')
+  @Post('/register')
   async create(@Body() createRequest: CreateUserRequest) {
     const createdUser: CreateUserResponse = await this.userService.signUp(
       createRequest,
@@ -78,7 +79,7 @@ export class UsersController {
     description:
       '잘못된 요청에 의한 오류입니다. 주로 요구사항에 맞지 않는 파라미터를 전달 시 해당 오류가 발생합니다.',
   })
-  @Post('/user/login')
+  @Post('/login')
   async jwtLogin(@Body() loginRequest: LoginRequest) {
     const loginResponse: LoginResponse = await this.userService.jwtLogin(
       loginRequest,
@@ -105,7 +106,7 @@ export class UsersController {
       '잘못된 요청에 의한 오류입니다. 주로 요구사항에 맞지 않는 파라미터를 전달 시 해당 오류가 발생합니다.',
   })
   @UseGuards(JwtAuthGuard)
-  @Get('/user/profile')
+  @Get('/profile')
   async readUserProfile(
     @ReadUser(UserRoleExistsPipe) authenticationResult: ReadUserResponse,
   ) {
@@ -154,7 +155,7 @@ export class UsersController {
       '잘못된 요청에 의한 오류입니다. 주로 요구사항에 맞지 않는 파라미터를 전달 시 해당 오류가 발생합니다.',
   })
   @UseGuards(JwtAuthGuard)
-  @Post()
+  @Put()
   async updateUser(
     @UpdateUser(UserRoleExistsPipe, UpdatePropertyExclusivelyExistsPipe)
     updateRequest: UpdateUserRequest,
