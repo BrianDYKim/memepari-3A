@@ -43,9 +43,17 @@ export class UserDao implements UserRepository {
     const newPassword: string = password ? password : foundUser.password;
     const newAddress: string = address ? address : foundUser.address;
 
-    return await this.userModel.findOneAndUpdate({id}, {
-      password: newPassword, 
-      address: newAddress
-    });
+    const result = await this.userModel.findOneAndUpdate(
+      { id },
+      {
+        password: newPassword,
+        address: newAddress,
+      },
+    );
+
+    result.password = newPassword;
+    result.address = newAddress;
+
+    return result;
   }
 }
