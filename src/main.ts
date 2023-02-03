@@ -30,7 +30,7 @@ async function bootstrap() {
 
   // security for swagger
   app.use(
-    ['/docs', 'docs-json'],
+    ['/auth-docs', 'docs-json'],
     expressBasicAuth({
       challenge: true,
       users: { [process.env.SWAGGER_USER]: process.env.SWAGGER_PASSWORD },
@@ -59,7 +59,7 @@ async function bootstrap() {
     app,
     swaggerConfig,
   );
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('auth-docs', app, document);
 
   await app.listen(PORT);
 }
