@@ -23,7 +23,8 @@ export class UsersServiceImpl implements UserService {
   ) {}
 
   async signUp(createRequest: CreateUserRequest): Promise<CreateUserResponse> {
-    const { email, password, name, address, phoneNumber } = createRequest;
+    const { email, password, name, address, phoneNumber, roles } =
+      createRequest;
 
     const isAlreadyExistsEmail = await this.userRepository.existsByEmail(email);
 
@@ -39,6 +40,7 @@ export class UsersServiceImpl implements UserService {
       name,
       address,
       phoneNumber,
+      roles,
     };
 
     const createdUser: User = await this.userRepository.createUser(hashedUser);
@@ -75,6 +77,7 @@ export class UsersServiceImpl implements UserService {
     const jwtPayload = {
       id: foundUser.id,
       email: foundUser.email,
+      roles: foundUser.roles,
     };
 
     return LoginResponse.of(this.jwtService.sign(jwtPayload));
@@ -108,15 +111,22 @@ export class UsersServiceImpl implements UserService {
   async updateUser(
     updateRequest: UpdateUserRequest,
   ): Promise<UpdateUserResponse> {
-    const { id, password, address } = updateRequest;
+    const { id, password, address, roles } = updateRequest;
 
     const hashedPassword: string | null = password
       ? await bcrypt.hash(updateRequest.password, 10)
       : null;
 
-    const hashedUserRequest: UpdateUserRequest = UpdateUserRequest.of(id, hashedPassword, address);
+    const hashedUserRequest: UpdateUserRequest = UpdateUserRequest.of(
+      id,
+      roles,
+      hashedPassword,
+      address,
+    );
 
-    const updatedUser: User = await this.userRepository.updateUser(hashedUserRequest);
+    const updatedUser: User = await this.userRepository.updateUser(
+      hashedUserRequest,
+    );
 
     return UpdateUserResponse.entityToResponse(updatedUser);
   }

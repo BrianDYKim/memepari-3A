@@ -1,18 +1,19 @@
+import { Role } from './../../../domain/vo/user-role.vo';
 import { User } from 'src/users/domain/user.entity';
 import { PickType, PartialType, ApiProperty } from '@nestjs/swagger';
 
-export class UpdateUserRequest {
+export class UpdateUserRequest extends PickType(User, ['roles'] as const) {
   @ApiProperty({
     example: null,
     description: 'user의 식별자입니다',
-    required: false
+    required: false,
   })
   id?: string;
 
   @ApiProperty({
     example: 'qwesfdfkjhqwe123!',
     description: '비밀번호',
-    required: false
+    required: false,
   })
   password?: string;
 
@@ -23,17 +24,21 @@ export class UpdateUserRequest {
   })
   address?: string;
 
-  constructor(id: string, password?: string, address?: string) {
+  constructor(id: string, roles: Role[], password?: string, address?: string) {
+    super();
+
     this.id = id;
+    this.roles = roles;
     this.password = password;
     this.address = address;
   }
 
   static of(
     id: string,
+    roles: Role[],
     password?: string,
     address?: string,
   ): UpdateUserRequest {
-    return new UpdateUserRequest(id, password, address);
+    return new UpdateUserRequest(id, roles, password, address);
   }
 }

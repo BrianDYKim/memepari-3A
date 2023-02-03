@@ -5,8 +5,8 @@ export const UpdateUser = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
     const { password, address } = request.body;
-    const { id } = request.user;
+    const { id, roles } = request.user;
 
-    return UpdateUserRequest.of(id, password, address);
+    return UpdateUserRequest.of(id, roles, password, address);
   },
 );
