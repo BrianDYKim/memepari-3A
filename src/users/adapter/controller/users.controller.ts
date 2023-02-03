@@ -34,7 +34,7 @@ import { ResultFactory } from 'src/common/results/results.factory';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { DeleteUser } from './decorators/user-delete.decorator';
 
-@Controller('users')
+@Controller('api/users')
 export class UsersController {
   constructor(@Inject('service') private readonly userService: UserService) {}
 
