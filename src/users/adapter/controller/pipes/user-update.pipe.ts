@@ -6,7 +6,7 @@ export class UpdatePropertyExclusivelyExistsPipe implements PipeTransform {
   transform(updateUserRequest: UpdateUserRequest) {
     const { password, address } = updateUserRequest;
 
-    if (password === null && address === null) {
+    if (!password && !address) {
         throw new HttpException('password, address 중 하나는 무조건 존재해야합니다', 400);
     }
 
