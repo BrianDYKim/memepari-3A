@@ -165,4 +165,48 @@ export class UsersController {
 
     return ResultFactory.getSuccessResult(updateUserResponse);
   }
+
+  @ApiOperation({
+    summary: '유저 권한 체크',
+  })
+  @ApiBearerAuth('accesskey')
+  @ApiResponse({
+    status: 200,
+    description: '사용자 프로파일 조회 성공 응답입니다.',
+    type: ReadUserResponse,
+  })
+  @ApiResponse({
+    status: 401,
+    description:
+      '유저 권한이 존재하지 않는 경우에 발생하는 오류입니다. 토큰을 다시 확인해주세요.',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('/auth/user')
+  async checkUserAuth(
+    @ReadUser(UserRoleExistsPipe) readUserResponse: ReadUserResponse,
+  ) {
+    return ResultFactory.getSuccessResult(true);
+  }
+
+  @ApiOperation({
+    summary: '관리자 권한 체크',
+  })
+  @ApiBearerAuth('accesskey')
+  @ApiResponse({
+    status: 200,
+    description: '사용자 프로파일 조회 성공 응답입니다.',
+    type: ReadUserResponse,
+  })
+  @ApiResponse({
+    status: 401,
+    description:
+      '유저 권한이 존재하지 않는 경우에 발생하는 오류입니다. 토큰을 다시 확인해주세요.',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('/auth/admin')
+  async checkAdminAuth(
+    @ReadUser(AdminRoleOnlyExistsPipe) readUserResponse: ReadUserResponse,
+  ) {
+    return ResultFactory.getSuccessResult(true);
+  }
 }
