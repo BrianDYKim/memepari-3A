@@ -99,7 +99,7 @@ export class UsersServiceImpl implements UserService {
     deleteRequest: DeleteUserRequest,
   ): Promise<DeleteUserResponse> {
     const { id, email } = deleteRequest;
-    const deleteResult: boolean = await this.userRepository.deleteOneById(id);
+    const deleteResult: User | null = await this.userRepository.deleteOneById(id);
 
     if (!deleteResult) {
       throw new HttpException('사용자 삭제가 실패하였습니다', 500);

@@ -30,10 +30,10 @@ export class UserDao implements UserRepository {
     return await this.userModel.findById(id);
   }
 
-  async deleteOneById(id: string): Promise<boolean> {
-    const result = await this.userModel.deleteOne({ id });
+  async deleteOneById(id: string): Promise<User | null> {
+    const targetUser = await this.userModel.findById(id);
 
-    return result ? true : false;
+    return await targetUser.delete();
   }
 
   async updateUser(updateRequest: UpdateUserRequest): Promise<User> {

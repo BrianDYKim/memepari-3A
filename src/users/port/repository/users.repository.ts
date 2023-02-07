@@ -11,7 +11,7 @@ export interface UserRepository {
 
   findOneById(id: string): Promise<User | null>;
 
-  deleteOneById(id: string): Promise<boolean>;
+  deleteOneById(id: string): Promise<User | null>;
 
   updateUser(updateRequest: UpdateUserRequest): Promise<User>;
 }
