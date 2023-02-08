@@ -33,6 +33,7 @@ import { CreateUserResponse } from 'src/users/port/dto/response/create-user.resp
 import { ResultFactory } from 'src/common/results/results.factory';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { DeleteUser } from './decorators/user-delete.decorator';
+import { AuthUserResponse } from 'src/users/port/dto/response/auth-user.response.dto';
 
 @Controller('api/users')
 export class UsersController {
@@ -185,7 +186,10 @@ export class UsersController {
   async checkUserAuth(
     @ReadUser(UserRoleExistsPipe) readUserResponse: ReadUserResponse,
   ) {
-    return ResultFactory.getSuccessResult(true);
+    const { id, email } = readUserResponse;
+    const responseData = AuthUserResponse.of(id, email);
+
+    return ResultFactory.getSuccessResult(responseData);
   }
 
   @ApiOperation({
@@ -207,6 +211,9 @@ export class UsersController {
   async checkAdminAuth(
     @ReadUser(AdminRoleOnlyExistsPipe) readUserResponse: ReadUserResponse,
   ) {
-    return ResultFactory.getSuccessResult(true);
+    const { id, email } = readUserResponse;
+    const responseData = AuthUserResponse.of(id, email);
+
+    return ResultFactory.getSuccessResult(responseData);
   }
 }
