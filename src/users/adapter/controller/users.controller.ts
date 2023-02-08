@@ -174,7 +174,7 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: '사용자 프로파일 조회 성공 응답입니다.',
-    type: ReadUserResponse,
+    type: AuthUserResponse,
   })
   @ApiResponse({
     status: 401,
@@ -199,7 +199,7 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: '사용자 프로파일 조회 성공 응답입니다.',
-    type: ReadUserResponse,
+    type: AuthUserResponse,
   })
   @ApiResponse({
     status: 401,
